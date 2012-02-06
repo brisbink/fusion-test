@@ -81,7 +81,7 @@ class CSVImporter(Importer):
 
   def _importRows(self, filehandle, table_id, cols):
     """ Helper function to upload rows of data in a CSV file to a table """
-    max_per_batch = 50
+    max_per_batch = 49
     queries = []
     rows = []
     for line in filehandle:
