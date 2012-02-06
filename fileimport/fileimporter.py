@@ -81,24 +81,18 @@ class CSVImporter(Importer):
 
   def _importRows(self, filehandle, table_id, cols):
     """ Helper function to upload rows of data in a CSV file to a table """
-    max_per_batch = 79
+    max_per_batch = 50
     queries = []
     rows = []
     for line in filehandle:
       values = dict(zip(cols, line))
       query = SQL().insert(table_id, values)
       queries.append(query)
-      query_length = len(';'.join(queries))
-      if query_length == max_per_batch or query_length > 1000000:
-        if query_length > 1000000:
-          full_query = ';'.join(queries[:-1])
-          rows += self._import(full_query)
-          queries = [queries[-1]]
-        else:
-          full_query = ';'.join(queries)
-          rows += self._import(full_query)
-          queries = []
-        time.sleep(5)
+      if len(queries) == max_per_batch:
+        full_query = ';'.join(queries)
+        rows += self._import(full_query)
+        queries = []
+        time.sleep(2)
 
     if len(queries) > 0:
       full_query = ';'.join(queries)
